@@ -1,4 +1,4 @@
-# CS-348 Programming Assignments
+# CS-348 Programming Assignments - Sem 6
 
 This repository contains solutions to four programming assignments for the CS-348 course, each focusing on different aspects of programming languages and tools. Below is an overview of each assignment along with the tools and concepts utilized, followed by instructions on running and testing the solutions.
 
