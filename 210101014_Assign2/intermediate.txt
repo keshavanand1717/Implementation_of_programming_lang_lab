@@ -1,0 +1,55 @@
+0400      COPY       START      400                             
+                     EXTDEF     BUFFER,BUFEND,LENGTH          
+                     EXTREF     RDREC,WRREC                   
+0400      FIRST      STL        RETADR                        
+0403      CLOOP     +JSUB       RDREC                         
+0407                 LDA        LENGTH                        
+040A                 COMP      #0                             
+040D                 JEQ        ENDFIL                        
+0410                +JSUB       WRREC                         
+0414                 J          CLOOP                         
+0417      ENDFIL     LDA       =C'EOF'                        
+041A                 STA        BUFFER                        
+041D                 LDA       #3                             
+0420                 STA        LENGTH                        
+0423                +JSUB       WRREC                         
+0427                 J         @RETADR                        
+042A      RETADR     RESW       1                             
+042D      LENGTH     RESW       1                             
+                     LTORG                                    
+0430      *         =C'EOF'                                   
+0433      BUFFER     RESB       4096                          
+1433      BUFEND     EQU        *                             
+1000      MAXLEN     EQU        BUFEND-BUFFER                 
+0000      RDREC      CSECT                                    
+                     EXTREF     BUFFER,LENGTH,BUFEND          
+0000                 CLEAR      X                             
+0002                 CLEAR      A                             
+0004                 CLEAR      S                             
+0006                 LDT        MAXLEN                        
+0009      RLOOP      TD        =X'F1'                         
+000C                 JEQ        RLOOP                         
+000F                 RD        =X'F1'                         
+0012                 COMPR      A,S                           
+0014                 JEQ        EXIT                          
+0017                +STCH       BUFFER,X                      
+001B                 TIXR       T                             
+001D                 JLT        RLOOP                         
+0020      EXIT      +STX        LENGTH                        
+0024                 RSUB                                     
+                     LTORG                                    
+0027      *         =X'F1'                                    
+0028      MAXLEN     WORD       BUFEND-BUFFER                 
+0000      WRREC      CSECT                                    
+                     EXTREF     BUFFER,LENGTH                 
+0000                 CLEAR      X                             
+0002                +LDT        LENGTH                        
+0006      WLOOP      TD        =X'05'                         
+0009                 JEQ        WLOOP                         
+000C                +LDCH       BUFFER,X                      
+0010                 WD        =X'05'                         
+0013                 TIXR       T                             
+0015                 JLT        WLOOP                         
+0018                 RSUB                                     
+                     END        FIRST
+001B      *         =X'05'                                    
